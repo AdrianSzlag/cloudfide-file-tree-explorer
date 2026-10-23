@@ -1,0 +1,58 @@
+.icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #65748b;
+  flex-shrink: 0;
+  span {
+    font-family: ui-monospace, monospace;
+    font-size: 9px;
+    color: #52678a;
+  }
+}
+.tree {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.row {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 6px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.82rem;
+    color: #344055;
+    min-width: 0;
+    flex: 1;
+    overflow-wrap: anywhere;
+    &:hover {
+      background: #f5f7fa;
+    }
+    &[aria-current] {
+      background: #edf2fc;
+      color: #315cbd;
+    }
+  }
+}
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  padding: 0;
+  width: 24px;
+  height: 30px;
+  flex-shrink: 0;
+}
+.spacer {
+  width: 24px;
+  flex-shrink: 0;
+}
