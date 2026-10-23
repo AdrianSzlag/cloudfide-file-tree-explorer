@@ -15,6 +15,24 @@ Open http://localhost:5173. Use `npm ci` instead of `npm install` for a clean in
 
 ## Design decisions
 
+```mermaid
+flowchart TB
+    subgraph Browser["Browser · React application"]
+        Router["Router"]
+        Import["Import page<br/>Paste JSON or choose a file"]
+        Explorer["Explorer page<br/>Tree, search and node details"]
+        Model["Shared tree model<br/>Validated nodes and computed sizes"]
+        Storage[("IndexedDB<br/>Original JSON")]
+        Router --> Import
+        Router --> Explorer
+        Import -->|"Validate and index"| Model
+        Model -->|"Render"| Explorer
+        Import -->|"Save validated import"| Storage
+        Storage -->|"Revalidate on reload"| Model
+    end
+    URL["URL<br/>Selected path and search query"] --> Router
+```
+
 - React Context holds the active tree. This single-user app does not need a backend or another state library.
 - Plain TypeScript functions validate the JSON, calculate folder sizes, and search the tree. React components display the results and handle user input.
 - The model stores nodes in a flat list with links to their parents and children. It processes the tree without recursive function calls, so deeply nested folders do not exhaust the call stack. It calculates folder sizes once per import.
@@ -44,6 +62,24 @@ Expanded folders stay open when switching between search and browsing. Reloading
 Sizes use B, KB, and MB, with 1 KB equal to 1024 bytes.
 
 ## Data safety and deployment
+
+```mermaid
+flowchart TB
+    subgraph Untrusted["UNTRUSTED INPUT"]
+        Input["Pasted text or uploaded file"]
+        Saved["Previously saved browser data"]
+    end
+    Gate["TRUST BOUNDARY<br/>Size limit → JSON parse → schema validation<br/>Unique names → node limit → safe size totals"]
+    subgraph Accepted["VALIDATED APPLICATION DATA"]
+        Tree["Flat tree model"]
+        UI["React text rendering"]
+        Tree --> UI
+    end
+    Input --> Gate
+    Saved --> Gate
+    Gate -->|"Valid"| Tree
+    Gate -->|"Invalid"| Error["Readable error; data not accepted"]
+```
 
 The app checks both imports and saved data before displaying them. Names appear as text, never HTML. Paths refer to entries in the imported tree and do not access the computer's filesystem.
 
